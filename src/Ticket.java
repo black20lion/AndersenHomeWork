@@ -1,50 +1,44 @@
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
 
 public class Ticket {
-    private static Set<String> existingIDs = new HashSet<>();
-    private String id = "";
-    private String concertHall = "";
-    private String eventCode = "";
+    private static final Set<String> EXISTING_ID_S = new HashSet<>();
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final String DEFAULT_STRING_IF_EMPTY = "";
+    private static final int ID_LENGTH = 4;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final ZoneId ZONE_ID = ZoneId.of("Asia/Tbilisi");
+    private String id;
+    private String concertHall;
+    private String eventCode;
     private final long time;
     private boolean isPromo;
     private StadiumSector stadiumSector = StadiumSector.A;
     private float maxAllowedBackpackWeight;
-    private final Date creationTime;
-    private BigDecimal price = BigDecimal.ZERO;
+    private final LocalDateTime creationTime;
+    private BigDecimal price;
 
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int ID_LENGTH = 4;
-    private static SecureRandom random = new SecureRandom();
-
-    // Empty constructor
     public Ticket() {
-         do {
-             this.id = generateRandomID();
-         }
-        while (existingIDs.contains(this.id));
-        existingIDs.add(this.id);
-
-        this.time = System.currentTimeMillis();
-        Calendar myCalendar = Calendar.getInstance();
-        myCalendar.setTimeInMillis(time);
-        this.creationTime = myCalendar.getTime();
-    }
-
-    // Limited constructor
-    public Ticket(String concertHall, String eventCode) {
         do {
             this.id = generateRandomID();
         }
-        while (existingIDs.contains(this.id));
-        existingIDs.add(this.id);
+        while (EXISTING_ID_S.contains(this.id));
+        EXISTING_ID_S.add(this.id);
+        this.time = LocalDateTime.now().atZone(ZONE_ID).toEpochSecond();
+        this.creationTime = LocalDateTime.now();
+        this.concertHall = DEFAULT_STRING_IF_EMPTY;
+        this.eventCode = DEFAULT_STRING_IF_EMPTY;
+        this.price = BigDecimal.ZERO;
+    }
 
+    public Ticket(String concertHall, String eventCode) {
+        this();
         if (concertHall.length() <= 10) {
             this.concertHall = concertHall;
         } else {
@@ -56,35 +50,11 @@ public class Ticket {
         } else {
             throw new IllegalArgumentException("Event code must be a 3-digit number.");
         }
-
-        this.time = System.currentTimeMillis();
-        Calendar myCalendar = Calendar.getInstance();
-        myCalendar.setTimeInMillis(time);
-        this.creationTime = myCalendar.getTime();
     }
 
-    // Full constructor
     public Ticket(String concertHall, String eventCode, boolean isPromo,
                   StadiumSector stadiumSector, float maxAllowedBackpackWeight, BigDecimal price) {
-
-        do {
-            this.id = generateRandomID();
-        }
-        while (existingIDs.contains(this.id));
-        existingIDs.add(this.id);
-
-        if (concertHall.length() <= 10) {
-            this.concertHall = concertHall;
-        } else {
-            throw new IllegalArgumentException("Concert hall string can not be longer than 10 characters");
-        }
-
-        if (eventCode.matches("^\\d{3}$")) {
-            this.eventCode = eventCode;
-        } else {
-            throw new IllegalArgumentException("Event code must be a 3-digit number.");
-        }
-
+        this(concertHall, eventCode);
         this.isPromo = isPromo;
         this.stadiumSector = stadiumSector;
 
@@ -92,7 +62,7 @@ public class Ticket {
             throw new IllegalArgumentException("Max allowed backpack weight can not be negative");
         } else {
             DecimalFormat df = new DecimalFormat("#.###");
-            String formattedWeight = df.format(maxAllowedBackpackWeight).replaceAll(",",".");
+            String formattedWeight = df.format(maxAllowedBackpackWeight).replaceAll(",", ".");
             this.maxAllowedBackpackWeight = Float.parseFloat(formattedWeight);
         }
 
@@ -101,14 +71,8 @@ public class Ticket {
         } else {
             this.price = price;
         }
-
-        this.time = System.currentTimeMillis();
-        Calendar myCalendar = Calendar.getInstance();
-        myCalendar.setTimeInMillis(time);
-        this.creationTime = myCalendar.getTime();
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -162,7 +126,7 @@ public class Ticket {
     }
 
     public void setStadiumSector(StadiumSector stadiumSector) {
-            this.stadiumSector = stadiumSector;
+        this.stadiumSector = stadiumSector;
     }
 
     public float getMaxAllowedBackpackWeight() {
@@ -174,7 +138,7 @@ public class Ticket {
             throw new IllegalArgumentException("Max allowed backpack weight can not be negative");
         } else {
             DecimalFormat df = new DecimalFormat("#.###");
-            String formattedWeight = df.format(maxAllowedBackpackWeight).replaceAll(",",".");
+            String formattedWeight = df.format(maxAllowedBackpackWeight).replaceAll(",", ".");
             this.maxAllowedBackpackWeight = Float.parseFloat(formattedWeight);
         }
     }
@@ -191,14 +155,14 @@ public class Ticket {
         }
     }
 
-    public Date getCreationTime() {
+    public LocalDateTime getCreationTime() {
         return creationTime;
     }
 
     private String generateRandomID() {
         StringBuilder idBuilder = new StringBuilder(ID_LENGTH);
         for (int i = 0; i < ID_LENGTH; i++) {
-            idBuilder.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+            idBuilder.append(CHARACTERS.charAt(SECURE_RANDOM.nextInt(CHARACTERS.length())));
         }
         return idBuilder.toString();
     }
