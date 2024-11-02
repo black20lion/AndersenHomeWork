@@ -32,6 +32,32 @@ public class TicketService {
         for (Ticket ticket : TICKET_STORAGE) {
             System.out.println(ticket);
         }
+        handleTicket("hello");
+        handleTicket(TICKET_STORAGE.get(2).getId());
+    }
+
+    public static void handleTicket(String id) {
+        Optional<Ticket> processing_ticket = getTicketById(id);
+        processing_ticket.ifPresentOrElse(
+                TicketService::processTicket,
+                () -> System.out.println("Ticket with id " + id + " is not found")
+        );
+    }
+
+    private static Optional<Ticket> getTicketById(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
+        if (TICKET_STORAGE == null) {
+            throw new IllegalStateException("Ticket storage has not been initialized");
+        }
+        return TICKET_STORAGE.stream()
+                .filter(ticket -> ticket.getId().equals(id))
+                .findFirst();
+    }
+
+    private static void processTicket(Ticket ticket) {
+        System.out.println("Ticket request result: " + ticket);
     }
 
     private static String getRandomConcertHall(Set<String> set) {
