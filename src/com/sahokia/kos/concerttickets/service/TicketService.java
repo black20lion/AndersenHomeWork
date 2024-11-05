@@ -1,10 +1,17 @@
+package com.sahokia.kos.concerttickets.service;
+
+import com.sahokia.kos.concerttickets.model.Identifiable;
+import com.sahokia.kos.concerttickets.interfaces.Printable;
+import com.sahokia.kos.concerttickets.model.StadiumSector;
+import com.sahokia.kos.concerttickets.model.Ticket;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.UUID;
 
-public class TicketService {
+public class TicketService extends Identifiable implements Printable {
     private static final Set<String> POSSIBLE_HALLS = new HashSet<>();
-    private static final List<Ticket> TICKET_STORAGE = new ArrayList<>();
     private static final Random RANDOM_GENERATOR = new Random();
     private static final float MAX_WEIGHT = 50.0f;
     private static final float MIN_WEIGHT = 0.0f;
@@ -18,47 +25,65 @@ public class TicketService {
         POSSIBLE_HALLS.add("Extra Hall");
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            TICKET_STORAGE.add(new Ticket(
-                    getRandomConcertHall(POSSIBLE_HALLS),
-                    getRandomEventCode(),
-                    RANDOM_GENERATOR.nextBoolean(),
-                    StadiumSector.values()[RANDOM_GENERATOR.nextInt(StadiumSector.values().length)],
-                    getRandomBackpackWeight(MIN_WEIGHT, MAX_WEIGHT),
-                    getRandomBigDecimal(MIN_PRICE, MAX_PRICE)
-            ));
-        }
-        for (Ticket ticket : TICKET_STORAGE) {
-            System.out.println(ticket);
-        }
-        handleTicket("hello");
-        handleTicket(TICKET_STORAGE.get(2).getId());
+    private final List<Ticket> ticketStorage;
+
+    public TicketService() {
+        this.ticketStorage = new ArrayList<>();
+        this.setId(UUID.randomUUID().toString());
     }
 
-    public static void handleTicket(String id) {
-        Optional<Ticket> processing_ticket = getTicketById(id);
-        processing_ticket.ifPresentOrElse(
-                TicketService::processTicket,
-                () -> System.out.println("Ticket with id " + id + " is not found")
+    @Override
+    public void print() {
+        for (Ticket ticket : this.ticketStorage) {
+            ticket.print();
+            System.out.println("===========================================");
+        }
+    }
+
+    public List<Ticket> getTicketStorage() {
+        return this.ticketStorage;
+    }
+
+    public void addTicket(Ticket ticket) {
+        this.ticketStorage.add(ticket);
+    }
+
+    public Ticket getRandomTicket() {
+        return new Ticket(
+                getRandomConcertHall(POSSIBLE_HALLS),
+                getRandomEventCode(),
+                RANDOM_GENERATOR.nextBoolean(),
+                StadiumSector.values()[RANDOM_GENERATOR.nextInt(StadiumSector.values().length)],
+                getRandomBackpackWeight(MIN_WEIGHT, MAX_WEIGHT),
+                getRandomBigDecimal(MIN_PRICE, MAX_PRICE)
         );
     }
 
-    private static Optional<Ticket> getTicketById(String id) {
+    public void handleTicket(String id) {
+        Optional<Ticket> processing_ticket = getTicketById(id);
+        processing_ticket.ifPresentOrElse(
+                this::processTicket,
+                () -> System.out.println("com.sahokia.kos.concerttickets.model.Ticket with id "
+                        + id + " is not found")
+        );
+    }
+
+    private Optional<Ticket> getTicketById(String id) {
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");
         }
-        if (TICKET_STORAGE == null) {
-            throw new IllegalStateException("Ticket storage has not been initialized");
+        if (ticketStorage == null) {
+            throw new IllegalStateException("com.sahokia.kos.concerttickets.model.Ticket storage has not been initialized");
         }
-        return TICKET_STORAGE.stream()
+        return ticketStorage.stream()
                 .filter(ticket -> ticket.getId().equals(id))
                 .findFirst();
     }
 
-    private static void processTicket(Ticket ticket) {
-        System.out.println("Ticket request result: " + ticket);
+    private void processTicket(Ticket ticket) {
+        System.out.println("com.sahokia.kos.concerttickets.model.Ticket request result: " + ticket);
     }
+
 
     private static String getRandomConcertHall(Set<String> set) {
         if (set.isEmpty()) {
@@ -68,7 +93,7 @@ public class TicketService {
         return selectedHall.orElse(MESSAGE_IF_NO_HALLS);
     }
 
-    private static String getRandomEventCode() {
+    private String getRandomEventCode() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 3; i++) {
             int digit = RANDOM_GENERATOR.nextInt(10);
@@ -77,7 +102,7 @@ public class TicketService {
         return sb.toString();
     }
 
-    private static float getRandomBackpackWeight(float min, float max) {
+    private float getRandomBackpackWeight(float min, float max) {
         if (min < 0 || max < 0) {
             throw new IllegalArgumentException("Weight must be non-negative.");
         }
@@ -87,7 +112,7 @@ public class TicketService {
         return min + RANDOM_GENERATOR.nextFloat() * (max - min);
     }
 
-    private static BigDecimal getRandomBigDecimal(BigDecimal minPrice, BigDecimal maxPrice) {
+    private BigDecimal getRandomBigDecimal(BigDecimal minPrice, BigDecimal maxPrice) {
         if (minPrice.compareTo(BigDecimal.ZERO) < 0 || maxPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Price must be non-negative.");
         }
