@@ -5,7 +5,7 @@ import com.sahokia.kos.concerttickets.service.TicketService;
 public class Admin extends User {
 
 
-    public void checkTicket (Ticket ticket, TicketService ticketService) {
+    public void checkTicket(Ticket ticket, TicketService ticketService) {
         if (ticket == null) {
             throw new IllegalArgumentException("ticket can not be null");
         }
