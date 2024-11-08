@@ -1,6 +1,6 @@
 package com.sahokia.kos.concerttickets.service;
 
-import com.sahokia.kos.concerttickets.model.Identifiable;
+import com.sahokia.kos.concerttickets.model.IdentifiableEntity;
 import com.sahokia.kos.concerttickets.interfaces.Printable;
 import com.sahokia.kos.concerttickets.model.StadiumSector;
 import com.sahokia.kos.concerttickets.model.Ticket;
@@ -10,7 +10,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.UUID;
 
-public class TicketService extends Identifiable implements Printable {
+public class TicketService extends IdentifiableEntity implements Printable {
     private static final Set<String> POSSIBLE_HALLS = new HashSet<>();
     private static final Random RANDOM_GENERATOR = new Random();
     private static final float MAX_WEIGHT = 50.0f;
@@ -28,8 +28,8 @@ public class TicketService extends Identifiable implements Printable {
     private final List<Ticket> ticketStorage;
 
     public TicketService() {
+        this.id = UUID.randomUUID().toString();
         this.ticketStorage = new ArrayList<>();
-        this.setId(UUID.randomUUID().toString());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TicketService extends Identifiable implements Printable {
         this.ticketStorage.add(ticket);
     }
 
-    public Ticket getRandomTicket() {
+    public Ticket generateRandomTicket() {
         return new Ticket(
                 getRandomConcertHall(POSSIBLE_HALLS),
                 getRandomEventCode(),

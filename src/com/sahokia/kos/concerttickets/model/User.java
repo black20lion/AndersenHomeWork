@@ -2,9 +2,9 @@ package com.sahokia.kos.concerttickets.model;
 
 import java.util.UUID;
 
-public abstract class User extends Identifiable {
+public abstract class User extends IdentifiableEntity {
     User() {
-        super.setId(UUID.randomUUID().toString());
+        this.id = (UUID.randomUUID().toString());
     }
 
     public void printRole() {

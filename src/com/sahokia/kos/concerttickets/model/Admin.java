@@ -1,21 +1,22 @@
 package com.sahokia.kos.concerttickets.model;
-
-import com.sahokia.kos.concerttickets.service.TicketService;
+import java.util.List;
 
 public class Admin extends User {
+    private List<Ticket> ticketStorage;
 
+    public Admin(List<Ticket> ticketStorage) {
+        this.ticketStorage = ticketStorage;
+    }
 
-    public void checkTicket(Ticket ticket, TicketService ticketService) {
+    public void checkTicket(Ticket ticket) {
         if (ticket == null) {
             throw new IllegalArgumentException("ticket can not be null");
         }
-        if (ticketService == null) {
-            throw new IllegalArgumentException("ticket service can not be null");
-        }
-        if (ticketService.getTicketStorage().contains(ticket)) {
-            System.out.println("Ticket is valid");
+
+        if (ticketStorage.contains(ticket)) {
+            System.out.println("Admin#" + this.id + ": Ticket #" + ticket.getId() + " is valid");
         } else {
-            System.out.println("Ticket is invalid");
+            System.out.println("Admin#" + this.id + ": Ticket #" + ticket.getId() + " is invalid");
         }
     }
 }

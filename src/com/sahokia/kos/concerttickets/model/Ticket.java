@@ -12,18 +12,17 @@ import java.util.Objects;
 import java.util.Set;
 
 
-public class Ticket extends Identifiable implements Printable {
+public class Ticket extends IdentifiableEntity implements Printable {
     private static final Set<String> EXISTING_ID_S = new HashSet<>();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final String DEFAULT_STRING_IF_EMPTY = "";
     private static final int ID_LENGTH = 4;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final ZoneId ZONE_ID = ZoneId.of("Asia/Tbilisi");
-
     private final LocalDateTime creationDateTime;
     private String concertHall;
     private String eventCode;
-    private long time;
+    private int time;
     private boolean isPromo;
     private StadiumSector stadiumSector = StadiumSector.A;
     private float maxAllowedBackpackWeight;
@@ -31,11 +30,11 @@ public class Ticket extends Identifiable implements Printable {
 
     public Ticket() {
         do {
-            this.setId(generateRandomID());
+            this.id = generateRandomID();
         }
         while (EXISTING_ID_S.contains(this.getId()));
         EXISTING_ID_S.add(this.getId());
-        this.time = LocalDateTime.now().atZone(ZONE_ID).toEpochSecond();
+        this.time = (int) LocalDateTime.now().atZone(ZONE_ID).toEpochSecond();
         this.creationDateTime = LocalDateTime.now();
         this.concertHall = DEFAULT_STRING_IF_EMPTY;
         this.eventCode = DEFAULT_STRING_IF_EMPTY;
@@ -81,7 +80,7 @@ public class Ticket extends Identifiable implements Printable {
     @Override
     public void setId(String id) {
         if (id.length() <= 4) {
-            super.setId(id);
+            this.id = id;
         } else {
             throw new IllegalArgumentException("ID can not be longer than 4 characters");
         }
@@ -89,15 +88,7 @@ public class Ticket extends Identifiable implements Printable {
 
     @Override
     public void print() {
-        System.out.println("ID of the ticket: " + this.getId());
-        System.out.println("Concert Hall: " + this.getConcertHall());
-        System.out.println("Event code: " + this.getEventCode());
-        System.out.println("UNIX timestamp: " + this.getTime());
-        System.out.println("Is promo: " + this.getIsPromo());
-        System.out.println("Stadium sector: " + this.getStadiumSector());
-        System.out.println("Max allowed backpack weight: " + this.getMaxAllowedBackpackWeight());
-        System.out.println("Price: " + this.getPrice());
-        System.out.println("Creation date and time: " + this.getCreationDateTime());
+        System.out.println(this.toString());
     }
 
     @Override
@@ -120,7 +111,7 @@ public class Ticket extends Identifiable implements Printable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ticket ticket = (Ticket) o;
-        return this.getId().equals(ticket.getId()) && getTime() == ticket.getTime() && isPromo == ticket.isPromo
+        return this.id.equals(ticket.getId()) && getTime() == ticket.getTime() && isPromo == ticket.isPromo
                 && Float.compare(getMaxAllowedBackpackWeight(), ticket.getMaxAllowedBackpackWeight()) == 0
                 && Objects.equals(getCreationDateTime(), ticket.getCreationDateTime())
                 && Objects.equals(getConcertHall(), ticket.getConcertHall())
@@ -137,25 +128,6 @@ public class Ticket extends Identifiable implements Printable {
                 getMaxAllowedBackpackWeight(), getPrice());
     }
 
-    public void share(String phone) {
-        if (phone == null) {
-            throw new IllegalArgumentException("Phone number can't be null");
-        }
-        System.out.println("Ticket #" + this.getId() +
-                " has been sent to the phone number: " + phone);
-    }
-
-    public void share(String phone, String email) {
-        if (phone == null) {
-            throw new IllegalArgumentException("Phone number can't be null");
-        }
-        if (email == null) {
-            throw new IllegalArgumentException("Email can't be null");
-        }
-        System.out.println("Ticket #" + this.getId() +
-                " has been sent to the phone number: " + phone + " and to the email: " + email);
-    }
-
     public String getConcertHall() {
         return concertHall;
     }
@@ -169,7 +141,7 @@ public class Ticket extends Identifiable implements Printable {
     }
 
     public long setTime(long time) {
-        return this.time = time;
+        return this.time = (int) time;
     }
 
     public boolean getIsPromo() {
