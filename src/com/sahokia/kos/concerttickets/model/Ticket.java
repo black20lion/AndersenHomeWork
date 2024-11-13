@@ -4,6 +4,7 @@ import com.sahokia.kos.concerttickets.interfaces.Printable;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.text.DecimalFormat;
@@ -22,7 +23,7 @@ public class Ticket extends IdentifiableEntity implements Printable {
     private final LocalDateTime creationDateTime;
     private String concertHall;
     private String eventCode;
-    private int time;
+    private Timestamp time;
     private boolean isPromo;
     private StadiumSector stadiumSector = StadiumSector.A;
     private float maxAllowedBackpackWeight;
@@ -34,7 +35,7 @@ public class Ticket extends IdentifiableEntity implements Printable {
         }
         while (EXISTING_ID_S.contains(this.getId()));
         EXISTING_ID_S.add(this.getId());
-        this.time = (int) LocalDateTime.now().atZone(ZONE_ID).toEpochSecond();
+        this.time = new Timestamp(System.currentTimeMillis());
         this.creationDateTime = LocalDateTime.now();
         this.concertHall = DEFAULT_STRING_IF_EMPTY;
         this.eventCode = DEFAULT_STRING_IF_EMPTY;
@@ -136,12 +137,12 @@ public class Ticket extends IdentifiableEntity implements Printable {
         return eventCode;
     }
 
-    public long getTime() {
+    public Timestamp getTime() {
         return time;
     }
 
-    public long setTime(long time) {
-        return this.time = (int) time;
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 
     public boolean getIsPromo() {

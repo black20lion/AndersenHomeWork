@@ -16,14 +16,14 @@ public class TicketServiceApplication {
         ticketService.print();
 
         Admin admin = new Admin(ticketService.getTicketStorage());
-        Client client = new Client();
+        Client client = new Client(ticketService.generateRandomTicket());
         admin.printRole();
         client.printRole();
         admin.checkTicket(ticketService.getTicketStorage().get(2));
         admin.checkTicket(ticketService.generateRandomTicket());
-        client.shareTicket(ticketService.generateRandomTicket(), "8-800-555-35-35");
-        client.shareTicket(ticketService.generateRandomTicket(), "8-800-555-35-35", "bestemail@gmail.com");
-        client.getTicket(ticketService.generateRandomTicket());
+        client.shareTicket("8-800-555-35-35");
+        client.shareTicket("8-800-555-35-35", "bestemail@gmail.com");
+        System.out.println(client.getTicket());
 
         Ticket ticketEquals1 = ticketService.generateRandomTicket();
         Ticket ticketEquals2 = new Ticket(ticketEquals1.getConcertHall(), ticketEquals1.getEventCode(),
