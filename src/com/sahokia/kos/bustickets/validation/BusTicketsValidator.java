@@ -15,44 +15,49 @@ import java.util.List;
 import java.util.Map;
 
 public class BusTicketsValidator {
+    private static final String TICKET_CLASS_VIOLATION_NAME = "ticket class";
+    private static final String TICKET_TYPE_VIOLATION_NAME = "ticket type";
+    private static final String PRICE_VIOLATION_NAME = "price";
+    private static final String START_DATE_VIOLATION_NAME = "start date";
 
     public void validateBusTickets(List<BusTicket> busTickets) {
-        Map<String, Boolean> current;
-        int total = 0;
+        Map<String, Boolean> currentBusTicketViolations;
         int valid = 0;
         Map<String, Integer> violations = new HashMap<>();
-        violations.put("ticket class", 0);
-        violations.put("ticket type", 0);
-        violations.put("price", 0);
-        violations.put("start date", 0);
+        violations.put(TICKET_CLASS_VIOLATION_NAME, 0);
+        violations.put(TICKET_TYPE_VIOLATION_NAME, 0);
+        violations.put(PRICE_VIOLATION_NAME, 0);
+        violations.put(START_DATE_VIOLATION_NAME, 0);
         for (BusTicket busTicket : busTickets) {
-            total++;
-            current = validateBusTicket(busTicket);
-            if (!current.containsValue(true)) {
+            currentBusTicketViolations = validateBusTicket(busTicket);
+            if (!currentBusTicketViolations.containsValue(true)) {
                 valid++;
             } else {
-                current.forEach((key, value) -> {
+                currentBusTicketViolations.forEach((key, value) -> {
                     if (value) {
                         violations.put(key, violations.get(key) + 1);
                     }
                 });
             }
         }
-        System.out.println("Total = " + total);
-        System.out.println("Valid = " + valid);
-        System.out.println("Most popular violation = " + violations.entrySet()
+
+        String mostPopularViolation = violations.entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .orElse(null));
+                .orElse(null);
+
+        System.out.println("Total = " + busTickets.size());
+        System.out.println("Valid = " + valid);
+        System.out.println("Most popular violation = " + mostPopularViolation);
     }
 
     public Map<String, Boolean> validateBusTicket(BusTicket busTicket) {
         Map<String, Boolean> violations = new HashMap<>();
-        violations.put("ticket class", false);
-        violations.put("ticket type", false);
-        violations.put("price", false);
-        violations.put("start date", false);
+        violations.put(TICKET_CLASS_VIOLATION_NAME, false);
+        violations.put(TICKET_TYPE_VIOLATION_NAME, false);
+        violations.put(PRICE_VIOLATION_NAME, false);
+        violations.put(START_DATE_VIOLATION_NAME, false);
         try {
             validateBusTicketClass(busTicket);
         } catch (TicketClassException ticketClassException) {
@@ -83,7 +88,7 @@ public class BusTicketsValidator {
         return violations;
     }
 
-    private void validateBusTicketClass(BusTicket busTicket) {
+    private void validateBusTicketClass(BusTicket busTicket) throws TicketClassException {
         if (busTicket.getTicketClass() == null)
             throw new TicketClassException("Ticket class is null in bus ticket " + busTicket);
         try {
@@ -93,7 +98,7 @@ public class BusTicketsValidator {
         }
     }
 
-    private void validateBusTicketType(BusTicket busTicket) {
+    private void validateBusTicketType(BusTicket busTicket) throws TicketTypeException {
         if (busTicket.getTicketType() == null)
             throw new TicketTypeException("Ticket type is null in bus ticket " + busTicket);
         try {
@@ -103,7 +108,7 @@ public class BusTicketsValidator {
         }
     }
 
-    private void validateStartDate(BusTicket busTicket) {
+    private void validateStartDate(BusTicket busTicket) throws StartDateException {
         if (busTicket.getTicketType() != null) {
             if ((busTicket.getTicketType().equals(TicketType.DAY) ||
                     busTicket.getTicketType().equals(TicketType.WEEK) ||
@@ -118,7 +123,7 @@ public class BusTicketsValidator {
         }
     }
 
-    private void validatePrice(BusTicket busTicket) {
+    private void validatePrice(BusTicket busTicket) throws PriceException {
         if (busTicket.getPrice() == null)
             throw new PriceException("Price is null in bus ticket " + busTicket);
         if (busTicket.getPrice().equals(BigDecimal.ZERO)) throw

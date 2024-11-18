@@ -15,11 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BusTicketsService {
-    private List<BusTicket> busTicketsStorage = new ArrayList<>();
     private BusTicketsValidator busTicketsValidator = new BusTicketsValidator();
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public void mapTicketsFromFile(String filePath) {
+    public List<BusTicket> mapTicketsFromFile(String filePath) {
         List<BusTicket> busTickets = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -28,64 +27,86 @@ public class BusTicketsService {
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-                String[] fields = line.split(",");
-                if (fields.length == 4) {
-                    String ticketClassStr = fields[0].trim();
-                    String ticketTypeStr = fields[1].trim();
-                    String startDateStr = fields[2].trim();
-                    String priceStr = fields[3].trim();
-
-                    TicketClass ticketClass = null;
-                    TicketType ticketType = null;
-                    BigDecimal price = null;
-                    LocalDate startDate = null;
-
-                    if (!ticketClassStr.equals("null") && !ticketClassStr.isEmpty()) {
-                        try {
-                            ticketClass = TicketClass.valueOf(ticketClassStr);
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Invalid ticket class: " + ticketClassStr);
-                        }
-                    }
-
-                    if (!ticketTypeStr.equals("null") && !ticketTypeStr.isEmpty()) {
-                        try {
-                            ticketType = TicketType.valueOf(ticketTypeStr);
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Invalid ticket type: " + ticketTypeStr);
-                        }
-                    }
-
-                    if (!priceStr.equals("null") && !priceStr.isEmpty()) {
-                        try {
-                            price = new BigDecimal(priceStr);
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid price format: " + priceStr);
-                        }
-                    }
-
-                    if (!startDateStr.equals("null") && !startDateStr.isEmpty()) {
-                        try {
-                            startDate = LocalDate.parse(startDateStr, dateFormatter);
-                        } catch (Exception e) {
-                            System.out.println("Invalid start date format: " + startDateStr);
-                        }
-                    }
-                    BusTicket ticket = new BusTicket(ticketClass, ticketType, startDate, price);
+                BusTicket ticket = mapLineToTicket(line);
+                if (ticket != null) {
                     busTickets.add(ticket);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        busTicketsStorage.addAll(busTickets);
+        return busTickets;
     }
 
-    public List<BusTicket> getBusTicketsStorage() {
-        return busTicketsStorage;
+    private BusTicket mapLineToTicket(String line) {
+        String[] fields = line.split(",");
+        if (fields.length != 4) {
+            System.out.println("Invalid line format: " + line);
+            return null;
+        }
+
+        String ticketClassStr = fields[0].trim();
+        String ticketTypeStr = fields[1].trim();
+        String startDateStr = fields[2].trim();
+        String priceStr = fields[3].trim();
+
+        TicketClass ticketClass = parseTicketClass(ticketClassStr);
+        TicketType ticketType = parseTicketType(ticketTypeStr);
+        BigDecimal price = parsePrice(priceStr);
+        LocalDate startDate = parseStartDate(startDateStr);
+
+        return new BusTicket(ticketClass, ticketType, startDate, price);
     }
 
-    public void validateBusTickets() {
-        this.busTicketsValidator.validateBusTickets(this.busTicketsStorage);
+    private TicketClass parseTicketClass(String ticketClassStr) {
+        if (isNotNullOrEmpty(ticketClassStr)) {
+            try {
+                return TicketClass.valueOf(ticketClassStr);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid ticket class: " + ticketClassStr);
+            }
+        }
+        return null;
+    }
+
+    private TicketType parseTicketType(String ticketTypeStr) {
+        if (isNotNullOrEmpty(ticketTypeStr)) {
+            try {
+                return TicketType.valueOf(ticketTypeStr);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid ticket type: " + ticketTypeStr);
+            }
+        }
+        return null;
+    }
+
+    private BigDecimal parsePrice(String priceStr) {
+        if (isNotNullOrEmpty(priceStr)) {
+            try {
+                return new BigDecimal(priceStr);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid price format: " + priceStr);
+            }
+        }
+        return null;
+    }
+
+    private LocalDate parseStartDate(String startDateStr) {
+        if (isNotNullOrEmpty(startDateStr)) {
+            try {
+                return LocalDate.parse(startDateStr, dateFormatter);
+            } catch (Exception e) {
+                System.out.println("Invalid start date format: " + startDateStr);
+            }
+        }
+        return null;
+    }
+
+    private boolean isNotNullOrEmpty(String str) {
+        return !str.equals("null") && !str.isEmpty();
+    }
+
+    public void validateBusTickets(List<BusTicket> busTickets) {
+        this.busTicketsValidator.validateBusTickets(busTickets);
     }
 }
