@@ -45,7 +45,7 @@ public class BusTicketsValidator {
                 .stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .orElse(null);
+                .orElse("Failed to find most popular violation");
 
         System.out.println("Total = " + busTickets.size());
         System.out.println("Valid = " + valid);
