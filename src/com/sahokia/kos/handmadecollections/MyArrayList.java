@@ -32,7 +32,7 @@ public class MyArrayList<T> {
                 array[i] = array[i + 1];
             }
             array[--size] = null;
-            if (size <= array.length / 4 && array.length / 2 >= DEFAULT_CAPACITY) {
+            if (array.length / 2 > size && array.length / 2 >= DEFAULT_CAPACITY) {
                 resize(array.length / 2);
             }
         } else {
@@ -42,7 +42,9 @@ public class MyArrayList<T> {
 
     private void resize(int newCapacity) {
         Object[] newArray = new Object[newCapacity];
-        if (size >= 0) System.arraycopy(array, 0, newArray, 0, size);
+        if (size >= 0) {
+            System.arraycopy(array, 0, newArray, 0, size);
+        }
         array = newArray;
     }
 }

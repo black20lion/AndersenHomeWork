@@ -9,7 +9,6 @@ public class MyHashSet<T> implements Iterable<T> {
     private LinkedList<T>[] buckets;
     private int size;
 
-    @SuppressWarnings("unchecked")
     public MyHashSet() {
         buckets = new LinkedList[DEFAULT_CAPACITY];
         size = 0;
@@ -49,7 +48,7 @@ public class MyHashSet<T> implements Iterable<T> {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
+
     private void resize() {
         LinkedList<T>[] oldBuckets = buckets;
         buckets = new LinkedList[oldBuckets.length * 2];
