@@ -112,7 +112,7 @@ public class Ticket extends IdentifiableEntity implements Printable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ticket ticket = (Ticket) o;
-        return this.id.equals(ticket.getId()) && getTime() == ticket.getTime() && isPromo == ticket.isPromo
+        return this.id.equals(ticket.getId()) && Objects.equals(getTime(), ticket.getTime()) && isPromo == ticket.isPromo
                 && Float.compare(getMaxAllowedBackpackWeight(), ticket.getMaxAllowedBackpackWeight()) == 0
                 && Objects.equals(getCreationDateTime(), ticket.getCreationDateTime())
                 && Objects.equals(getConcertHall(), ticket.getConcertHall())
