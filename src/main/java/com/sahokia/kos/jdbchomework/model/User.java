@@ -7,7 +7,6 @@ public class User {
     private String name;
     private LocalDate creationDate;
 
-    // Конструкторы, геттеры и сеттеры
     public User(int id, String name, LocalDate creationDate) {
         this.id = id;
         this.name = name;
