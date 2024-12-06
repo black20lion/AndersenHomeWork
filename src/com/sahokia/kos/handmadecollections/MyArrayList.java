@@ -4,6 +4,7 @@ public class MyArrayList<T> {
     private Object[] array;
     private int size;
     private static final int DEFAULT_CAPACITY = 10;
+    private static final int RESIZE_MEASURE = 2;
 
     public MyArrayList() {
         array = new Object[DEFAULT_CAPACITY];
@@ -12,7 +13,7 @@ public class MyArrayList<T> {
 
     public void put(T element) {
         if (size == array.length) {
-            resize(array.length * 2);
+            resize(array.length * RESIZE_MEASURE);
         }
         array[size] = element;
         size++;
@@ -32,8 +33,8 @@ public class MyArrayList<T> {
                 array[i] = array[i + 1];
             }
             array[--size] = null;
-            if (array.length / 2 > size && array.length / 2 >= DEFAULT_CAPACITY) {
-                resize(array.length / 2);
+            if (array.length / RESIZE_MEASURE > size && array.length / RESIZE_MEASURE >= DEFAULT_CAPACITY) {
+                resize(array.length / RESIZE_MEASURE);
             }
         } else {
             throw new IndexOutOfBoundsException("Index out of bounds");
