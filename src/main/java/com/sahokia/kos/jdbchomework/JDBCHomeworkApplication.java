@@ -17,11 +17,11 @@ public class JDBCHomeworkApplication {
         ticketServiceDAO.saveTicket(7, TicketType.DAY, Date.valueOf(LocalDate.now()));
         ticketServiceDAO.saveTicket(7, TicketType.YEAR, Date.valueOf(LocalDate.now()));
         ticketServiceDAO.saveUser("Tomas", Date.valueOf(LocalDate.now()));
-        List<Ticket> vanyaTickets = ticketServiceDAO.getTicketsByUserId(7);
-        System.out.println(vanyaTickets);
+        List<Ticket> userTickets = ticketServiceDAO.getTicketsByUserId(7);
+        System.out.println(userTickets);
         ticketServiceDAO.updateTicketType(3, TicketType.WEEK);
-        Optional<User> optionalVanya = ticketServiceDAO.getUserById(7);
-        User vanya = optionalVanya.orElse(new User(-1, "User not found", LocalDate.now()));
-        System.out.println(vanya);
+        Optional<User> optionalUser = ticketServiceDAO.getUserById(7);
+        User user = optionalUser.orElse(new User(-1, "User not found", LocalDate.now()));
+        System.out.println(user);
     }
 }
