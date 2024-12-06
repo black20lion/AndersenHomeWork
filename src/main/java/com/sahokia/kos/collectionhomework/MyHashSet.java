@@ -1,4 +1,4 @@
-package com.sahokia.kos.handmadecollections;
+package com.sahokia.kos.collectionhomework;
 
 import java.util.Iterator;
 import java.util.LinkedList;

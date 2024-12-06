@@ -1,4 +1,4 @@
-package com.sahokia.kos.handmadecollections;
+package com.sahokia.kos.collectionhomework;
 
 public class HandMadeCollectionsApplication {
     public static void main(String[] args) {
