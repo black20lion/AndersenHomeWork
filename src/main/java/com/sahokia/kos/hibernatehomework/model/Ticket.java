@@ -3,9 +3,11 @@ package com.sahokia.kos.hibernatehomework.model;
 
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -25,8 +27,9 @@ public class Ticket {
     @Column(name = "ticket_type", columnDefinition = "ticket_type")
     private TicketType ticketType;
 
+    @CreationTimestamp
     @Column(name = "creation_date")
-    private LocalDate creationDate;
+    private Instant creationDate;
 
     public Ticket() {
     }
@@ -34,7 +37,6 @@ public class Ticket {
     public Ticket(Customer customer, TicketType ticketType) {
         this.customer = customer;
         this.ticketType = ticketType;
-        this.creationDate = LocalDate.now();
     }
 
     public int getId() {
@@ -61,11 +63,11 @@ public class Ticket {
         this.ticketType = ticketType;
     }
 
-    public LocalDate getCreationDate() {
+    public Instant getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(Instant creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -78,4 +80,5 @@ public class Ticket {
                 ", creationDate=" + creationDate +
                 '}';
     }
+
 }

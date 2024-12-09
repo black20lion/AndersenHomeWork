@@ -1,7 +1,11 @@
 package com.sahokia.kos.hibernatehomework.model;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "customer")
@@ -17,12 +21,15 @@ public class Customer {
     @Column(name = "name")
     private String name;
 
+    @CreationTimestamp
     @Column(name = "creation_date")
-    private LocalDate creationDate;
+    private Instant creationDate;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ticket> tickets = new ArrayList<>();
 
     public Customer(String name) {
         this.name = name;
-        this.creationDate = LocalDate.now();
     }
 
     public int getId() {
@@ -41,11 +48,11 @@ public class Customer {
         this.name = name;
     }
 
-    public LocalDate getCreationDate() {
+    public Instant getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(Instant creationDate) {
         this.creationDate = creationDate;
     }
 
