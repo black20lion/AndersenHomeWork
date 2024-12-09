@@ -2,9 +2,9 @@ package com.sahokia.kos.hibernatehomework.service;
 
 import com.sahokia.kos.hibernatehomework.dao.TicketDao;
 import com.sahokia.kos.hibernatehomework.dao.CustomerDao;
+import com.sahokia.kos.hibernatehomework.model.Customer;
 import com.sahokia.kos.hibernatehomework.model.Ticket;
 import com.sahokia.kos.hibernatehomework.model.TicketType;
-import com.sahokia.kos.hibernatehomework.model.Customer;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class TicketService {
     public void createTicketForCustomer(int userId, Ticket ticket) {
         Customer customer = customerDao.findById(userId);
         if (customer == null) {
-            throw new IllegalArgumentException("User with id " + userId + " not found.");
+            throw new IllegalArgumentException("Customer with id " + userId + " not found.");
         }
         ticket.setCustomer(customer);
         ticketDao.saveTicket(ticket);
