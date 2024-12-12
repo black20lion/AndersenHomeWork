@@ -1,13 +1,13 @@
-package com.sahokia.kos.jdbchomework.model;
+package com.sahokia.kos.springhomeworkone.model;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
-public class User {
+public class Customer {
     private int id;
     private String name;
-    private LocalDate creationDate;
+    private Instant creationDate;
 
-    public User(int id, String name, LocalDate creationDate) {
+    public Customer(int id, String name, Instant creationDate) {
         this.id = id;
         this.name = name;
         this.creationDate = creationDate;
@@ -21,8 +21,20 @@ public class User {
         return name;
     }
 
-    public LocalDate getCreationDate() {
+    public Instant getCreationDate() {
         return creationDate;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCreationDate(Instant creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override

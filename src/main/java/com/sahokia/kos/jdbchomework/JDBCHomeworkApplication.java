@@ -21,7 +21,7 @@ public class JDBCHomeworkApplication {
         System.out.println(userTickets);
         ticketServiceDAO.updateTicketType(3, TicketType.WEEK);
         Optional<User> optionalUser = ticketServiceDAO.getUserById(7);
-        User user = optionalUser.orElse(new User(-1, "User not found", LocalDate.now()));
+        User user = optionalUser.orElse(new User(-1, "Customer not found", LocalDate.now()));
         System.out.println(user);
     }
 }
