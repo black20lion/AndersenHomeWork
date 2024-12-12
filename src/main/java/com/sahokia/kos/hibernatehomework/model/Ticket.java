@@ -80,5 +80,4 @@ public class Ticket {
                 ", creationDate=" + creationDate +
                 '}';
     }
-
 }
